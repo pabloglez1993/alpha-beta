@@ -224,12 +224,35 @@ class Jugador:
     
     def puedeMover(self, tablero):
         
-        if (
-                (self.y - 1 >= 0 and tablero[self.y - 1][self.x] != -1 and tablero[self.y - 1][self.x] != -2) or 
-                (self.x + 1 < len(TABLERO) and tablero[self.y][self.x + 1] != -1 and tablero[self.y][self.x + 1] != -2) or 
-                (self.y + 1 < len(TABLERO) and tablero[self.y + 1][self.x] != -1 and tablero[self.y + 1][self.x] != -2) or 
-                (self.x - 1 >= 0 and tablero[self.y][self.x - 1] != -1 and tablero[self.y][self.x - 1] != -2)
-        ):
+        if self.puedeMoverArriba(tablero) or self.puedeMoverDerecha(tablero) or self.puedeMoverAbajo(tablero) or self.puedeMoverIzquierda(tablero):
+            return True
+        
+        return False
+    
+    def puedeMoverArriba(self, tablero):
+        
+        if self.y - 1 >= 0 and tablero[self.y - 1][self.x] != -1 and tablero[self.y - 1][self.x] != -2:
+            return True
+        
+        return False
+    
+    def puedeMoverDerecha(self, tablero):
+        
+        if self.x + 1 < len(TABLERO) and tablero[self.y][self.x + 1] != -1 and tablero[self.y][self.x + 1] != -2:
+            return True
+        
+        return False
+    
+    def puedeMoverAbajo(self, tablero):
+        
+        if self.y + 1 < len(TABLERO) and tablero[self.y + 1][self.x] != -1 and tablero[self.y + 1][self.x] != -2:
+            return True
+        
+        return False
+    
+    def puedeMoverIzquierda(self, tablero):
+        
+        if self.x - 1 >= 0 and tablero[self.y][self.x - 1] != -1 and tablero[self.y][self.x - 1] != -2:
             return True
         
         return False
@@ -239,7 +262,7 @@ class Jugador:
         if self.tipo:
             raiz = Nodo(self.x, self.y, j2x, j2y, resultado, tablero)
             raiz.crearArbol(self.tipo, nivel)
-            raiz.imprimir()
+            #raiz.imprimir()
             movimiento = raiz.minimax(self.tipo, nivel)
             if movimiento[1] == 'arriba':
                 self.y -= 1
@@ -262,22 +285,22 @@ class Jugador:
         else:
             while True:
                 movimiento = input('Tu turno: ')
-                if movimiento.lower() == 'w':
+                if movimiento.lower() == 'w' and self.puedeMoverArriba(tablero):
                     self.y -= 1
                     resultado -= tablero[self.y][self.x]
                     tablero[self.y][self.x] = -2
                     break
-                elif movimiento.lower() == 'd':
+                elif movimiento.lower() == 'd' and self.puedeMoverDerecha(tablero):
                     self.x += 1
                     resultado -= tablero[self.y][self.x]
                     tablero[self.y][self.x] = -2
                     break
-                elif movimiento.lower() == 's':
+                elif movimiento.lower() == 's' and self.puedeMoverAbajo(tablero):
                     self.y += 1
                     resultado -= tablero[self.y][self.x]
                     tablero[self.y][self.x] = -2
                     break
-                elif movimiento.lower() == 'a':
+                elif movimiento.lower() == 'a' and self.puedeMoverIzquierda(tablero):
                     self.x -= 1
                     resultado -= tablero[self.y][self.x]
                     tablero[self.y][self.x] = -2
@@ -309,7 +332,7 @@ class Juego:
         
         while True:
             
-            nivel = int(input('Seleccione el nivel de dificultad (minimo 3): '))
+            nivel = int(input('Seleccione el nivel de dificultad (mínimo 3): '))
             
             if nivel >= 3:
                 return nivel
@@ -338,7 +361,7 @@ class Juego:
         self.tablero[self.jugador1.y][self.jugador1.x] = -1 
         self.tablero[self.jugador2.y][self.jugador2.x] = -2
         self.imprimir()
-        print(self.resultado)
+        print('Resultado: ' + str(self.resultado))
         
         while True:
             
@@ -348,7 +371,7 @@ class Juego:
             self.resultado = self.jugador1.mueve(self.jugador2.x, self.jugador2.y, self.nivel, self.resultado, self.tablero)
             
             self.imprimir()
-            print(self.resultado)
+            print('Resultado: ' + str(self.resultado))
             
             if not self.jugador2.puedeMover(self.tablero):
                 break
@@ -356,15 +379,15 @@ class Juego:
             self.resultado = self.jugador2.mueve(self.jugador1.x, self.jugador1.y, self.nivel, self.resultado, self.tablero)
             
             self.imprimir()
-            print(self.resultado)
+            print('Resultado: ' + str(self.resultado))
         
         if self.resultado < 0:
             print('Ganaste: ' + str(self.resultado))
         elif self.resultado > 0:
-            print('Gano la computadora: ' + str(self.resultado))
+            print('Ganó la computadora: ' + str(self.resultado))
         else:
             print('Empate', str(self.resultado))
-            
+
 juego = Juego()
 TABLERO = np.copy(juego.tablero)
 juego.jugar()
